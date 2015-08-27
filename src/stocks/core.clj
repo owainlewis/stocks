@@ -1,8 +1,19 @@
+;; ************************************************************
+;;
+;; Stocks is a library for stock market analysis
+;;
+;; It includes functionality to discover important metrics about a given stock such as
+;; daily returns, sharpe ratio etc
+;;
+;; ************************************************************
+
 (ns stocks.core
   (:require
     [clj-http.client :as client]
     [clj-time.format :as f]
     [clj-time.core :as t]))
+
+;; Grunt work
 
 (def yahoo "https://query.yahooapis.com/v1/public/yql")
 (def table "store://datatables.org/alltableswithkeys")
@@ -43,3 +54,22 @@
         response (client/get yahoo
                    {:query-params query-params :as :json})]
     (->> response :body :query :results :quote)))
+
+(defn normalize-key [k]
+  (->> k (name) (.toLowerCase) (keyword)))
+
+(defn normalize-stock-result
+  "Normalize Yahoo results to make them more aesthetic in key structure"
+  [result]
+  (let [partial-update
+         (into {}
+           (for [[k v] result]
+             (hash-map (normalize-key k) v)))]
+;; TODO use a fold or something here. Need to update  bunch of values to be double
+   partial-update))
+
+;; Analysis
+
+(defn daily-returns-for-last-n-months [stock n]
+  (let [stock-results (>> (past-n-months-for-stock stock n))]
+    (map :Adj_Close stock-results)))
