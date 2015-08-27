@@ -18,12 +18,6 @@
   (format (apply str parts)
     stock start end)))
 
-(defn past-n-months-for-stock
-  "Return a YQL query that will fetch the last n months of data
-   for a given stock"
-  [stock n]
-  (apply (partial historical-quote stock) (past-n-months 12)))
-
 (def fmt
   (partial f/unparse
     (f/formatters :date)))
@@ -33,11 +27,19 @@
         then (t/minus now (t/months n))]
   (mapv fmt [then now])))
 
+(defn past-n-months-for-stock
+  "Return a YQL query that will fetch the last n months of data
+   for a given stock"
+  [stock n]
+  (let [f (partial historical-quote stock)
+        duration (past-n-months 12)]
+    (apply f duration)))
+
 ;; Query
 
-(defn yql-query
+(defn >>
   [query]
   (let [query-params {:q query, :format "json", :env table }
         response (client/get yahoo
                    {:query-params query-params :as :json})]
-    (->> response :body)))
+    (->> response :body :query :results :quote)))
