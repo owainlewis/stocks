@@ -73,14 +73,20 @@
            (for [[k v] result]
              (hash-map (normalize-key k) v)))]
 ;; TODO use a fold or something here. Need to update  bunch of values to be double
-   (normalize-kv partial-update [:open :high :low :close :volume :adj_close])))
+   (normalize-kv partial-update 
+     [:open :high :low :close :volume :adj_close])))
 
 (defn >>
   [query]
   (let [query-params {:q query, :format "json", :env table }
         response (client/get yahoo
                    {:query-params query-params :as :json})]
-    (->> response :body :query :results :quote (map normalize-stock-result))))
+    (->> response 
+         :body 
+         :query 
+         :results 
+         :quote 
+         (map normalize-stock-result))))
 
 ;; Analysis
 
