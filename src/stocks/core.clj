@@ -48,15 +48,22 @@
 
 ;; Query
 
-(defn >>
-  [query]
-  (let [query-params {:q query, :format "json", :env table }
-        response (client/get yahoo
-                   {:query-params query-params :as :json})]
-    (->> response :body :query :results :quote)))
+
+;;{:Symbol "GOOG", :Date "2015-08-28", :Open "632.820007", :High "636.880005", :Low "624.559998", :Close "630.380005", :Volume "1973500", :Adj_Close "630.380005"}
 
 (defn normalize-key [k]
   (->> k (name) (.toLowerCase) (keyword)))
+
+(defn normalize-type [m k]
+  (when-let [v (get m k)]
+    (assoc m k (read-string v))))
+
+(defn normalize-kv [m ks]
+  (into {}
+    (for [[k v] m]
+      (if (contains? (set ks) k)
+        {k (read-string v)}
+        {k v}))))
 
 (defn normalize-stock-result
   "Normalize Yahoo results to make them more aesthetic in key structure"
@@ -66,10 +73,27 @@
            (for [[k v] result]
              (hash-map (normalize-key k) v)))]
 ;; TODO use a fold or something here. Need to update  bunch of values to be double
-   partial-update))
+   (normalize-kv partial-update [:open :high :low :close :volume :adj_close])))
+
+(defn >>
+  [query]
+  (let [query-params {:q query, :format "json", :env table }
+        response (client/get yahoo
+                   {:query-params query-params :as :json})]
+    (->> response :body :query :results :quote (map normalize-stock-result))))
 
 ;; Analysis
 
+;; 1. Calculate the daily returns for a given stock
+
+;; Zipping the pairs for returns (needs better name)
+;; Is there a more ideomatic way to do this?
+(defn pair-seq [xs]
+  ((comp reverse into) []
+    (for [[k v] (zipmap (cons 0 xs) xs)]
+      (- v k))))
+
 (defn daily-returns-for-last-n-months [stock n]
-  (let [stock-results (>> (past-n-months-for-stock stock n))]
-    (map :Adj_Close stock-results)))
+  (let [stock-results (>> (past-n-months-for-stock stock n))
+        values (map :adj_close stock-results)]
+    (pair-seq values)))
