@@ -1,12 +1,3 @@
-;; ************************************************************
-;;
-;; Stocks is a library for stock market analysis
-;;
-;; It includes functionality to discover important metrics about a given stock such as
-;; daily returns, sharpe ratio etc
-;;
-;; ************************************************************
-
 (ns stocks.core
   (:require
     [clj-http.client :as client]
@@ -47,9 +38,6 @@
     (apply f duration)))
 
 ;; Query
-
-
-;;{:Symbol "GOOG", :Date "2015-08-28", :Open "632.820007", :High "636.880005", :Low "624.559998", :Close "630.380005", :Volume "1973500", :Adj_Close "630.380005"}
 
 (defn normalize-key [k]
   (->> k (name) (.toLowerCase) (keyword)))
