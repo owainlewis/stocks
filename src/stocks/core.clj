@@ -84,16 +84,19 @@
 
 ;; Analysis
 
-;; 1. Calculate the daily returns for a given stock
+;; 1. Daily returns for a stock
 
-;; Zipping the pairs for returns (needs better name)
-;; Is there a more ideomatic way to do this?
-(defn pair-seq [xs]
-  ((comp reverse into) []
-    (for [[k v] (zipmap (cons 0 xs) xs)]
-      (- v k))))
+(defn percentage-return [value-then value-now]
+  (let [v (- (/ value-now value-then) 1)]
+    (double (* v 100))))
+
+(defn return-seq [xs]
+  (for [[before after] (map vector (cons 0 xs) xs)]
+    (percentage-return before after)))
+
+;; Daily return = (day / day before) - 1
 
 (defn daily-returns-for-last-n-months [stock n]
   (let [stock-results (>> (past-n-months-for-stock stock n))
         values (map :adj_close stock-results)]
-    (pair-seq values)))
+    (return-seq values)))
