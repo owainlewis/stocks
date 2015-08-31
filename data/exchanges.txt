@@ -1,0 +1,4 @@
+symbol,name
+FTSE,FTSE 100
+FTMC,FTSE 250
+FTAI,AIM
