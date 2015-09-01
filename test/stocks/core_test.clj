@@ -2,6 +2,8 @@
   (:require [clojure.test :refer :all]
             [stocks.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest normalize-kv-test
+  (testing "should normalize a map"
+    (let [before {:a "1.2" :b "foo"}
+          after (normalize-kv before [:a])]
+    (is (= {:a 1.2 :b "foo"} after)))))

@@ -59,38 +59,24 @@
   (let [partial-update
          (into {}
            (for [[k v] result]
-             (hash-map (normalize-key k) v)))]
-;; TODO use a fold or something here. Need to update  bunch of values to be double
-   (normalize-kv partial-update 
-     [:open :high :low :close :volume :adj_close])))
+             (hash-map (normalize-key k) v)))
+         result (normalize-kv partial-update
+                  [:open :high :low :close :volume :adj_close])]
+  (dissoc result :symbol)))
 
 (defn >>
   [query]
   (let [query-params {:q query, :format "json", :env table }
         response (client/get yahoo
-                   {:query-params query-params :as :json})]
-    (->> response 
-         :body 
-         :query 
-         :results 
-         :quote 
-         (map normalize-stock-result))))
+                   {:query-params query-params :as :json})
+        data (->> response :body :query :results :quote)]
+      (mapv normalize-stock-result data)))
 
-;; Analysis
+;; Public query methods
+;; *********************************************************
 
-;; 1. Daily returns for a stock
+(def ranges
+  {:1D ""})
 
-(defn percentage-return [value-then value-now]
-  (let [v (- (/ value-now value-then) 1)]
-    (double (* v 100))))
-
-(defn return-seq [xs]
-  (for [[before after] (map vector (cons 0 xs) xs)]
-    (percentage-return before after)))
-
-;; Daily return = (day / day before) - 1
-
-(defn daily-returns-for-last-n-months [stock n]
-  (let [stock-results (>> (past-n-months-for-stock stock n))
-        values (map :adj_close stock-results)]
-    (return-seq values)))
+(defn stock-performance [symbol number-of-months]
+  (>> (past-n-months-for-stock symbol number-of-months)))
