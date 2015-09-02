@@ -1,4 +1,7 @@
-symbol,name
-FTSE,FTSE 100
-FTMC,FTSE 250
-FTAI,AIM
+name,country,hq
+New York Stock Exchange,United States,New York
+NASDAQ,United States,New York
+London Stock Exchange,United Kingdom,London
+Japan Exchange Group,Japan,Tokyo
+Shanghai Stock Exchange,China,Shanghai
+Hong Kong Stock Exchange,Hong Kong,Hong Kong
