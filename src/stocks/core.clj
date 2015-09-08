@@ -10,7 +10,7 @@
 (def table "store://datatables.org/alltableswithkeys")
 
 (defn stock-quote [stock]
-  (format "select * from yahoo.finance.quote where symbol=\"%s\"" stock))
+  (format "select * from yahoo.finance.quote where symbol=\"^%s\"" stock))
 
 (defn historical-quote
   "Generates a historical YQL query"
@@ -60,8 +60,8 @@
          (into {}
            (for [[k v] result]
              (hash-map (normalize-key k) v)))
-         result (normalize-kv partial-update
-                  [:open :high :low :close :volume :adj_close])]
+        result (normalize-kv partial-update
+                 [:open :high :low :close :volume :adj_close])]
   (dissoc result :symbol)))
 
 (defn >>
@@ -70,7 +70,9 @@
         response (client/get yahoo
                    {:query-params query-params :as :json})
         data (->> response :body :query :results :quote)]
-      (mapv normalize-stock-result data)))
+      (if (map? data)
+        data
+        (mapv normalize-stock-result data))))
 
 ;; Public query methods
 ;; *********************************************************
@@ -78,5 +80,8 @@
 (def ranges
   {:1D ""})
 
-(defn stock-performance [symbol number-of-months]
+(defn get-performance [symbol number-of-months]
   (>> (past-n-months-for-stock symbol number-of-months)))
+
+(defn get-quote [symbol]
+  (>> (stock-quote symbol)))

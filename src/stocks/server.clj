@@ -14,9 +14,26 @@
    :body (json/generate-string body {:pretty true})})
 
 (defroutes api-routes
-  (GET "/" []
+  (GET "/stocks/:symbol" [symbol]
     (json-handler
-      (s/stock-performance "AAPL" 1))))
+      (s/get-quote symbol)))
+
+  (GET "/stocks/:symbol/1M" [symbol]
+    (json-handler
+      (s/get-performance symbol 1)))
+
+  (GET "/stocks/:symbol/3M" [symbol]
+    (json-handler
+      (s/get-performance symbol 3)))
+
+  (GET "/stocks/:symbol/6M" [symbol]
+    (json-handler
+      (s/get-performance symbol 6)))
+
+  (GET "/stocks/:symbol/12M" [symbol]
+    (json-handler
+      (s/get-performance symbol 12)))
+)
 
 (def app
   (-> api-routes))
