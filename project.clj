@@ -13,6 +13,7 @@
                  [clj-time "0.11.0"]
                  [compojure "1.3.4"]
                  [cheshire "5.5.0"]
+                 [environ "1.0.0"]
                  [ring/ring-core "1.3.2"]
                  [ring/ring-jetty-adapter "1.2.2"]
                  [clj-http "2.0.0"]])

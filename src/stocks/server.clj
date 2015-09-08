@@ -1,8 +1,10 @@
 (ns stocks.server
   (:require [compojure.core :refer :all]
             [stocks.core :as s]
+            [environ.core :refer [env]]
+            [ring.adapter.jetty :as jetty]
             [cheshire.core :as json]
-            [compojure.handler :as handler]
+            [compojure.handler :refer [site]]
             [compojure.route :as route]))
 
 (defn json-handler [body]
@@ -37,3 +39,7 @@
 
 (def app
   (-> api-routes))
+
+(defn -main [& [port]]
+  (let [port (Integer. (or port (env :port) 5000))]
+    (jetty/run-jetty (site #'app) {:port port :join? false})))
