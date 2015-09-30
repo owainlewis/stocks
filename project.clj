@@ -1,4 +1,4 @@
-(defproject stocks "0.1.0-SNAPSHOT"
+(defproject io.forward/stocks "0.1.0-SNAPSHOT"
   :description "Stock market data"
   :url "http://github.com/owainlewis"
   :license {:name "Eclipse Public License"

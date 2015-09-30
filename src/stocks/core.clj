@@ -85,3 +85,11 @@
 
 (defn get-quote [symbol]
   (>> (stock-quote symbol)))
+
+;; US Markets
+
+(defn nasdaq [] (get-quote "NDX"))
+(defn sp500 [] (get-quote "GSPC"))
+
+;; UK Markets
+(defn ftse100 [] (get-quote "FTSE"))
