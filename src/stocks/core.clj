@@ -4,9 +4,8 @@
     [clj-time.format :as f]
     [clj-time.core :as t]))
 
-;; Grunt work
-
 (def yahoo "https://query.yahooapis.com/v1/public/yql")
+
 (def table "store://datatables.org/alltableswithkeys")
 
 (defn stock-quote [stock]
@@ -36,8 +35,6 @@
   (let [f (partial historical-quote stock)
         duration (past-n-months 12)]
     (apply f duration)))
-
-;; Query
 
 (defn normalize-key [k]
   (->> k (name) (.toLowerCase) (keyword)))
@@ -74,22 +71,12 @@
         data
         (mapv normalize-stock-result data))))
 
-;; Public query methods
-;; *********************************************************
-
-(def ranges
-  {:1D ""})
-
 (defn get-performance [symbol number-of-months]
   (>> (past-n-months-for-stock symbol number-of-months)))
 
 (defn get-quote [symbol]
   (>> (stock-quote symbol)))
 
-;; US Markets
-
 (defn nasdaq [] (get-quote "NDX"))
-(defn sp500 []  (get-quote "GSPC"))
-
-;; UK Markets
+(defn sp500 [] (get-quote "GSPC"))
 (defn ftse100 [] (get-quote "FTSE"))
