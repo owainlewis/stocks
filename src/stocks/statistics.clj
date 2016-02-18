@@ -1,9 +1,5 @@
 (ns stocks.statistics)
 
-;; Standard deviation
-
-;; Sharpe ratio
-
 (defn percentage-return
   "Get the percentage return given a value before and now"
   [value-then value-now]
@@ -17,5 +13,7 @@
   [xs]
   (for [[before after] (map vector (cons 0 xs) xs)]
     (percentage-return before after)))
-
+  
+;; Standard deviation
+;; Sharpe ratio
 ;; Annual return
